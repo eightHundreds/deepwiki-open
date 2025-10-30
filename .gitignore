@@ -70,3 +70,5 @@ certs/
 
 # CLI generated documentation
 .repo-wiki/
+# But allow the example
+!examples/.repo-wiki/
