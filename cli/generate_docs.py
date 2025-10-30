@@ -16,17 +16,49 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Dict, Optional
 
-# Add api directory to path to import modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'api'))
-
 import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Import from api modules
-from config import get_model_config, configs, DEFAULT_EXCLUDED_DIRS, DEFAULT_EXCLUDED_FILES
+# Default exclusions
+DEFAULT_EXCLUDED_DIRS = [
+    ".venv", "venv", "env", "virtualenv",
+    "node_modules", "bower_components", "jspm_packages",
+    ".git", ".svn", ".hg", ".bzr",
+    "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".coverage",
+    "dist", "build", "out", "target", "bin", "obj",
+    "docs", "_docs", "site-docs", "_site",
+    ".idea", ".vscode", ".vs", ".eclipse", ".settings",
+    "logs", "log", "tmp", "temp",
+]
+
+DEFAULT_EXCLUDED_FILES = [
+    "yarn.lock", "pnpm-lock.yaml", "npm-shrinkwrap.json", "poetry.lock",
+    "Pipfile.lock", ".DS_Store", "Thumbs.db", ".env",
+    ".gitignore", ".gitattributes", "package-lock.json",
+]
+
+# Model configurations
+DEFAULT_MODELS = {
+    'google': {
+        'model': 'gemini-2.5-flash',
+        'temperature': 0.7,
+        'top_p': 0.8,
+        'top_k': 40
+    },
+    'openai': {
+        'model': 'gpt-4o',
+        'temperature': 0.7,
+        'top_p': 0.8
+    },
+    'ollama': {
+        'model': 'llama3',
+        'temperature': 0.7,
+        'top_p': 0.8
+    }
+}
 
 
 def get_file_tree(repo_path: str, excluded_dirs: List[str], excluded_files: List[str]) -> str:
@@ -348,14 +380,18 @@ IMPORTANT FORMATTING INSTRUCTIONS:
     print(f"🤖 Generating wiki structure with {provider}...")
     
     if provider == 'google':
-        model_config = get_model_config(provider, model)
+        # Get model config
+        if not model:
+            model = DEFAULT_MODELS['google']['model']
+        model_cfg = DEFAULT_MODELS.get('google', {})
+        
         genai.configure(api_key=os.environ.get('GOOGLE_API_KEY'))
         llm = genai.GenerativeModel(
-            model_name=model_config['model_kwargs']['model'],
+            model_name=model,
             generation_config={
-                'temperature': model_config['model_kwargs']['temperature'],
-                'top_p': model_config['model_kwargs']['top_p'],
-                'top_k': model_config['model_kwargs']['top_k']
+                'temperature': model_cfg.get('temperature', 0.7),
+                'top_p': model_cfg.get('top_p', 0.8),
+                'top_k': model_cfg.get('top_k', 40)
             }
         )
         response = llm.generate_content(prompt)
@@ -447,14 +483,18 @@ Write in a clear, professional style suitable for technical documentation.
     
     # Generate content using LLM
     if provider == 'google':
-        model_config = get_model_config(provider, model)
+        # Get model config
+        if not model:
+            model = DEFAULT_MODELS['google']['model']
+        model_cfg = DEFAULT_MODELS.get('google', {})
+        
         genai.configure(api_key=os.environ.get('GOOGLE_API_KEY'))
         llm = genai.GenerativeModel(
-            model_name=model_config['model_kwargs']['model'],
+            model_name=model,
             generation_config={
-                'temperature': model_config['model_kwargs']['temperature'],
-                'top_p': model_config['model_kwargs']['top_p'],
-                'top_k': model_config['model_kwargs']['top_k']
+                'temperature': model_cfg.get('temperature', 0.7),
+                'top_p': model_cfg.get('top_p', 0.8),
+                'top_k': model_cfg.get('top_k', 40)
             }
         )
         response = llm.generate_content(prompt)
@@ -568,8 +608,7 @@ def main():
     model = args.model
     if not model:
         # Use default model for provider
-        model_config = get_model_config(args.provider, None)
-        model = model_config['model_kwargs']['model']
+        model = DEFAULT_MODELS.get(args.provider, {}).get('model', 'gemini-2.5-flash')
     
     try:
         # Generate wiki structure
