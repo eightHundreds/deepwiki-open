@@ -9,6 +9,9 @@
 3. Create visual diagrams to explain how everything works
 4. Organize it all into an easy-to-navigate wiki
 
+> **🆕 New: CLI Tool Available!**
+> Generate documentation directly in your project with the DeepWiki CLI tool. Perfect for local documentation generation without needing the web interface. See [CLI Documentation](./CLI_README.md) for details.
+
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/sheing)
 [![Tip in Crypto](https://tip.md/badge.svg)](https://tip.md/sng-asyncfunc)
 [![Twitter/X](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/sashimikun_void)
@@ -19,6 +22,7 @@
 ## ✨ Features
 
 - **Instant Documentation**: Turn any GitHub, GitLab or BitBucket repo into a wiki in seconds
+- **CLI Tool**: Generate documentation directly in your project with `.repo-wiki` directory
 - **Private Repository Support**: Securely access private repositories with personal access tokens
 - **Smart Analysis**: AI-powered understanding of code structure and relationships
 - **Beautiful Diagrams**: Automatic Mermaid diagrams to visualize architecture and data flow
@@ -29,6 +33,26 @@
 - **Flexible Embeddings**: Choose between OpenAI, Google AI, or local Ollama embeddings for optimal performance
 
 ## 🚀 Quick Start (Super Easy!)
+
+### Option 0: CLI Tool (For Local Documentation Generation)
+
+Generate documentation directly in your project:
+
+```bash
+# Install dependencies
+npm install
+cd api && poetry install && cd ..
+
+# Set your API key
+export GOOGLE_API_KEY=your_api_key
+
+# Generate documentation
+node bin/deepwiki.js
+
+# Documentation will be created in .repo-wiki/ directory
+```
+
+For more CLI options and detailed usage, see [CLI Documentation](./CLI_README.md) or [CLI 文档（中文）](./CLI_README_zh.md).
 
 ### Option 1: Using Docker
 
