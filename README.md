@@ -36,12 +36,11 @@
 
 ### Option 0: CLI Tool (For Local Documentation Generation)
 
-Generate documentation directly in your project:
+Generate documentation directly in your project with pure Node.js:
 
 ```bash
 # Install dependencies
 npm install
-cd api && poetry install && cd ..
 
 # Set your API key
 export GOOGLE_API_KEY=your_api_key
@@ -51,6 +50,8 @@ node bin/deepwiki.js
 
 # Documentation will be created in .repo-wiki/ directory
 ```
+
+**No Python required!** The CLI tool is now pure Node.js.
 
 For more CLI options and detailed usage, see [CLI Documentation](./CLI_README.md) or [CLI 文档（中文）](./CLI_README_zh.md).
 

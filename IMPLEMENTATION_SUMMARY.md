@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully transformed DeepWiki-Open into a Node.js CLI tool that generates project documentation. The implementation preserves the core AI-powered documentation generation capabilities while removing the web UI, RAG, and chat features as requested.
+Successfully transformed DeepWiki-Open into a **pure Node.js** CLI tool that generates project documentation. The implementation preserves the core AI-powered documentation generation capabilities while removing the web UI, RAG, and chat features as requested. **All Python code has been removed** - the tool is now 100% Node.js.
 
 ## Implementation Approach
 
@@ -13,19 +13,22 @@ Created `bin/deepwiki.js` using Commander.js to provide a user-friendly command-
 - Help documentation
 - Version information
 
-### 2. Documentation Generator (Python)
-Created `cli/generate_docs.py` as a self-contained script that:
+### 2. Documentation Generator (Node.js)
+Created `cli/generate-docs.js` as a pure Node.js module that:
 - Analyzes repository structure (file tree + README)
 - Uses LLM (Google Gemini by default) to determine optimal wiki structure
 - Generates individual markdown pages with AI-created content
 - Creates Mermaid diagrams where appropriate
 - Saves output to `.repo-wiki` directory
+- Uses `@google/generative-ai` package for Google Gemini integration
+- Uses `xml2js` for parsing XML responses
 
 ### 3. Integration
-The Node.js CLI spawns the Python script with appropriate arguments, making it a seamless experience for users while leveraging both ecosystems' strengths.
+The Node.js CLI directly imports and calls the documentation generator module, providing a seamless, single-language experience.
 
 ## Key Features
 
+✅ **Pure Node.js**: No Python required!  
 ✅ **No Web UI Required**: Pure command-line tool  
 ✅ **Focused on Documentation**: Removed RAG/chat capabilities  
 ✅ **Local Generation**: Creates `.repo-wiki` directory in project  
@@ -38,15 +41,15 @@ The Node.js CLI spawns the Python script with appropriate arguments, making it a
 ## Files Created/Modified
 
 ### New Files
-- `bin/deepwiki.js` - CLI entry point (155 lines)
-- `cli/generate_docs.py` - Documentation generator (650 lines)
+- `bin/deepwiki.js` - CLI entry point
+- `cli/generate-docs.js` - Documentation generator (Node.js)
 - `CLI_README.md` - English documentation
 - `CLI_README_zh.md` - Chinese documentation
 - `examples/README.md` - Example explanation
 - `examples/.repo-wiki/` - Example output (6 files)
 
 ### Modified Files
-- `package.json` - Added bin entry and commander dependency
+- `package.json` - Added bin entry and Node.js dependencies (@google/generative-ai, xml2js, dotenv)
 - `.gitignore` - Added .repo-wiki/ exclusion with example exception
 - `README.md` - Added CLI introduction section
 
@@ -66,22 +69,28 @@ deepwiki /path/to/repo
 
 ## Technical Decisions
 
-1. **Node.js CLI + Python Backend**: 
-   - Leverages existing Python AI infrastructure
+1. **Pure Node.js Implementation**: 
+   - Removed Python dependency entirely
+   - Uses `@google/generative-ai` for Google Gemini integration
    - Provides familiar npm/Node.js experience
-   - Easy to install and use
+   - Easy to install and use with just `npm install`
 
-2. **Self-Contained Python Script**:
+2. **Self-Contained Node.js Module**:
    - Avoided complex import dependencies
    - Defined model configs inline
    - Reduced coupling with web application code
+   - All logic in `cli/generate-docs.js`
 
 3. **Commander.js**:
    - Industry-standard CLI framework
    - Automatic help generation
    - Clean argument parsing
 
-4. **Preserved AI Logic**:
+4. **xml2js for XML Parsing**:
+   - Replaced Python's ElementTree with Node.js xml2js
+   - Handles LLM's XML responses effectively
+
+5. **Preserved AI Logic**:
    - Uses same prompting strategy as web app
    - Maintains quality of generated documentation
    - Compatible with existing LLM providers
@@ -90,11 +99,10 @@ deepwiki /path/to/repo
 
 ### Node.js
 - commander: CLI framework
-
-### Python (via Poetry)
-- google-generativeai: Google Gemini integration
-- python-dotenv: Environment variable management
-- (All other dependencies from existing api/pyproject.toml)
+- @google/generative-ai: Google Gemini integration
+- xml2js: XML parsing for LLM responses
+- dotenv: Environment variable management
+- (Plus existing Next.js dependencies for web app)
 
 ## Example Output Structure
 

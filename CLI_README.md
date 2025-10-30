@@ -10,29 +10,21 @@ DeepWiki CLI is a command-line tool that generates comprehensive documentation f
 - 📊 Automatic generation of Mermaid diagrams for architecture visualization
 - ⚙️ Configurable output with customizable exclusions
 - 📚 Choose between concise (4-6 pages) or comprehensive (8-12 pages) documentation
+- ⚡ Pure Node.js implementation - no Python required!
 
 ## Installation
 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Python 3.11+
-- Poetry (for Python dependencies)
 
 ### Install Dependencies
 
-1. Install Node.js dependencies:
+Install Node.js dependencies:
 ```bash
 npm install
 # or
 yarn install
-```
-
-2. Install Python dependencies:
-```bash
-cd api
-poetry install
-cd ..
 ```
 
 ### Install CLI Globally (Optional)
@@ -212,24 +204,24 @@ If you get an error about missing API keys:
 - Make sure you've set the appropriate environment variable (GOOGLE_API_KEY or OPENAI_API_KEY)
 - Or use the `--api-key` option to provide the key directly
 
-### Python Dependencies
-
-If you get import errors:
-- Make sure you've installed the Python dependencies: `cd api && poetry install`
-- Verify that Python 3.11+ is installed: `python3 --version`
-
 ### Permission Issues
 
 If you get permission denied errors:
 - Make sure the output directory is writable
 - Check that you have read permissions for the repository directory
 
+### Module Not Found Errors
+
+If you get module not found errors:
+- Make sure you've installed the dependencies: `npm install`
+- Try reinstalling: `rm -rf node_modules package-lock.json && npm install`
+
 ## Development
 
 To contribute to DeepWiki CLI:
 
 1. Clone the repository
-2. Install dependencies (Node.js and Python)
+2. Install dependencies: `npm install`
 3. Make your changes
 4. Test the CLI: `node bin/deepwiki.js`
 5. Submit a pull request

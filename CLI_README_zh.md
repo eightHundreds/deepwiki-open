@@ -10,29 +10,21 @@ DeepWiki CLI 是一个命令行工具，可以为您的代码仓库生成全面�
 - 📊 自动生成 Mermaid 架构图
 - ⚙️ 可配置的输出，支持自定义排除规则
 - 📚 可选择简洁（4-6 页）或全面（8-12 页）的文档
+- ⚡ 纯 Node.js 实现 - 无需 Python！
 
 ## 安装
 
 ### 前置要求
 
 - Node.js 18+ 和 npm
-- Python 3.11+
-- Poetry（用于 Python 依赖）
 
 ### 安装依赖
 
-1. 安装 Node.js 依赖：
+安装 Node.js 依赖：
 ```bash
 npm install
 # 或
 yarn install
-```
-
-2. 安装 Python 依赖：
-```bash
-cd api
-poetry install
-cd ..
 ```
 
 ### 全局安装 CLI（可选）
@@ -212,24 +204,24 @@ deepwiki --provider ollama --model llama3
 - 确保您已设置适当的环境变量（GOOGLE_API_KEY 或 OPENAI_API_KEY）
 - 或使用 `--api-key` 选项直接提供密钥
 
-### Python 依赖
-
-如果您遇到导入错误：
-- 确保您已安装 Python 依赖：`cd api && poetry install`
-- 验证 Python 3.11+ 已安装：`python3 --version`
-
 ### 权限问题
 
 如果您遇到权限拒绝错误：
 - 确保输出目录可写
 - 检查您对仓库目录有读取权限
 
+### 模块未找到错误
+
+如果您遇到模块未找到错误：
+- 确保您已安装依赖：`npm install`
+- 尝试重新安装：`rm -rf node_modules package-lock.json && npm install`
+
 ## 开发
 
 要为 DeepWiki CLI 做出贡献：
 
 1. 克隆仓库
-2. 安装依赖（Node.js 和 Python）
+2. 安装依赖：`npm install`
 3. 进行更改
 4. 测试 CLI：`node bin/deepwiki.js`
 5. 提交拉取请求

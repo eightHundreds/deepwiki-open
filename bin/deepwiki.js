@@ -10,7 +10,7 @@
 const { program } = require('commander');
 const path = require('path');
 const fs = require('fs');
-const { spawn } = require('child_process');
+const { generateDocumentation } = require('../cli/generate-docs');
 
 // Package version
 const packageJson = require('../package.json');
@@ -58,83 +58,51 @@ program
       console.log(`🤖 Provider: ${options.provider}`);
       console.log(`📚 Mode: ${options.comprehensive ? 'Comprehensive' : 'Concise'}\n`);
 
-      // Prepare environment variables
-      const env = { ...process.env };
-      
       // Set API key if provided
       if (options.apiKey) {
         if (options.provider === 'google') {
-          env.GOOGLE_API_KEY = options.apiKey;
+          process.env.GOOGLE_API_KEY = options.apiKey;
         } else if (options.provider === 'openai') {
-          env.OPENAI_API_KEY = options.apiKey;
+          process.env.OPENAI_API_KEY = options.apiKey;
         }
       }
 
       // Check if required API keys are set
-      if (options.provider === 'google' && !env.GOOGLE_API_KEY) {
+      if (options.provider === 'google' && !process.env.GOOGLE_API_KEY) {
         console.error('❌ Error: GOOGLE_API_KEY environment variable is required for Google provider');
         console.error('   Set it with: export GOOGLE_API_KEY=your_key');
         console.error('   Or use: --api-key your_key');
         process.exit(1);
       }
 
-      if (options.provider === 'openai' && !env.OPENAI_API_KEY) {
+      if (options.provider === 'openai' && !process.env.OPENAI_API_KEY) {
         console.error('❌ Error: OPENAI_API_KEY environment variable is required for OpenAI provider');
         console.error('   Set it with: export OPENAI_API_KEY=your_key');
         console.error('   Or use: --api-key your_key');
         process.exit(1);
       }
 
-      // Build the arguments for the Python script
-      const scriptPath = path.join(__dirname, '..', 'cli', 'generate_docs.py');
-      const args = [
-        scriptPath,
-        '--repo-path', absoluteRepoPath,
-        '--output-dir', outputDir,
-        '--language', options.language,
-        '--provider', options.provider,
-      ];
-
-      if (options.model) {
-        args.push('--model', options.model);
-      }
-
-      if (options.excludeDirs) {
-        args.push('--exclude-dirs', options.excludeDirs);
-      }
-
-      if (options.excludeFiles) {
-        args.push('--exclude-files', options.excludeFiles);
-      }
-
-      if (options.comprehensive) {
-        args.push('--comprehensive');
-      }
-
-      // Execute the Python script
-      const pythonProcess = spawn('python3', args, {
-        env,
-        stdio: 'inherit',
+      // Call the documentation generator
+      const exitCode = await generateDocumentation({
+        repoPath: absoluteRepoPath,
+        outputDir: outputDir,
+        language: options.language,
+        provider: options.provider,
+        model: options.model,
+        excludeDirs: options.excludeDirs,
+        excludeFiles: options.excludeFiles,
+        comprehensive: options.comprehensive,
       });
 
-      pythonProcess.on('error', (error) => {
-        console.error('❌ Error: Failed to start documentation generation');
-        console.error(`   ${error.message}`);
-        process.exit(1);
-      });
+      if (exitCode === 0) {
+        console.log(`   Output directory: ${outputDir}`);
+      }
 
-      pythonProcess.on('close', (code) => {
-        if (code === 0) {
-          console.log('\n✅ Documentation generated successfully!');
-          console.log(`   Output directory: ${outputDir}`);
-        } else {
-          console.error(`\n❌ Documentation generation failed with exit code ${code}`);
-          process.exit(code);
-        }
-      });
+      process.exit(exitCode);
 
     } catch (error) {
       console.error('❌ Error:', error.message);
+      console.error(error.stack);
       process.exit(1);
     }
   });
