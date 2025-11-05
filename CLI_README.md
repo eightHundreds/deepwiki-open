@@ -194,14 +194,10 @@ Default model: `gemini-2.5-flash`
 
 ```bash
 export DEEPSEEK_API_KEY=your_api_key
-# Optional: point to a custom endpoint or the included mock server
-export DEEPSEEK_BASE_URL=http://localhost:3800/v1
 deepwiki --provider deepseek
 ```
 
 Default model: `deepseek-chat`
-
-> 💡 Tip: The repository ships with `tools/mock-deepseek-server.js` to emulate the DeepSeek API when direct internet access is unavailable. Start it with `node tools/mock-deepseek-server.js` and set `DEEPSEEK_BASE_URL` to `http://localhost:3800/v1` before running the CLI.
 
 ### OpenAI
 

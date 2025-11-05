@@ -194,14 +194,10 @@ deepwiki --provider google
 
 ```bash
 export DEEPSEEK_API_KEY=your_api_key
-# 可选：指向自定义接口或内置的模拟服务器
-export DEEPSEEK_BASE_URL=http://localhost:3800/v1
 deepwiki --provider deepseek
 ```
 
 默认模型：`deepseek-chat`
-
-> 💡 小贴士：仓库提供了 `tools/mock-deepseek-server.js`，可在无法访问外网时模拟 DeepSeek API。先运行 `node tools/mock-deepseek-server.js`，然后将 `DEEPSEEK_BASE_URL` 设置为 `http://localhost:3800/v1` 再执行 CLI。
 
 ### OpenAI
 

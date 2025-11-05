@@ -248,8 +248,6 @@ OLLAMA_HOST=your_ollama_host # Optional, if Ollama is not local. default: http:/
 DEEPWIKI_CONFIG_DIR=/path/to/custom/config/dir  # Optional, for custom config file location
 ```
 
-> **DeepSeek testing tip:** When corporate proxies block `api.deepseek.com`, start the included mock server (`node tools/mock-deepseek-server.js`) and set `DEEPSEEK_BASE_URL=http://localhost:3800/v1` before invoking the CLI.
-
 ### Configuration Files
 
 DeepWiki uses JSON configuration files to manage various aspects of the system:
