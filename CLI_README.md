@@ -73,7 +73,7 @@ Options:
   -V, --version                  output the version number
   -o, --output <dir>             Output directory name (default: ".repo-wiki")
   -l, --language <lang>          Documentation language (en, zh, ja, es, kr, vi, pt-br, fr, ru) (default: "en")
-  --provider <provider>          LLM provider (google, openai, ollama) (default: "google")
+  --provider <provider>          LLM provider (google, deepseek, openai, ollama) (default: "google")
   --model <model>                Model name to use
   --exclude-dirs <dirs>          Comma-separated list of directories to exclude
   --exclude-files <files>        Comma-separated list of files to exclude
@@ -89,6 +89,13 @@ Options:
 ```bash
 export GOOGLE_API_KEY=your_api_key
 deepwiki
+```
+
+#### Generate documentation with DeepSeek
+
+```bash
+export DEEPSEEK_API_KEY=your_api_key
+deepwiki --provider deepseek
 ```
 
 #### Generate documentation with OpenAI
@@ -127,6 +134,8 @@ deepwiki --provider google --model gemini-2.5-pro
 The CLI uses the following environment variables:
 
 - `GOOGLE_API_KEY`: Google Gemini API key (required when using Google provider)
+- `DEEPSEEK_API_KEY`: DeepSeek API key (required when using DeepSeek provider)
+- `DEEPSEEK_BASE_URL`: Override the DeepSeek API base URL (optional, useful behind proxies or when using a mock server)
 - `OPENAI_API_KEY`: OpenAI API key (required when using OpenAI provider)
 - `OLLAMA_HOST`: Ollama host URL (optional, defaults to http://localhost:11434)
 
@@ -134,6 +143,7 @@ You can set these in a `.env` file in the project root:
 
 ```bash
 GOOGLE_API_KEY=your_google_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -179,6 +189,19 @@ deepwiki --provider google
 ```
 
 Default model: `gemini-2.5-flash`
+
+### DeepSeek
+
+```bash
+export DEEPSEEK_API_KEY=your_api_key
+# Optional: point to a custom endpoint or the included mock server
+export DEEPSEEK_BASE_URL=http://localhost:3800/v1
+deepwiki --provider deepseek
+```
+
+Default model: `deepseek-chat`
+
+> 💡 Tip: The repository ships with `tools/mock-deepseek-server.js` to emulate the DeepSeek API when direct internet access is unavailable. Start it with `node tools/mock-deepseek-server.js` and set `DEEPSEEK_BASE_URL` to `http://localhost:3800/v1` before running the CLI.
 
 ### OpenAI
 

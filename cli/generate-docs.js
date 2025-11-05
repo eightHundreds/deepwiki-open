@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { parseStringPromise } = require('xml2js');
+const { ProxyAgent, fetch: undiciFetch } = require('undici');
 require('dotenv').config();
 
 // Default exclusions
@@ -40,6 +41,11 @@ const DEFAULT_MODELS = {
     topP: 0.8,
     topK: 40,
   },
+  deepseek: {
+    model: 'deepseek-chat',
+    temperature: 0.7,
+    topP: 0.8,
+  },
   openai: {
     model: 'gpt-4o',
     temperature: 0.7,
@@ -51,6 +57,89 @@ const DEFAULT_MODELS = {
     topP: 0.8,
   },
 };
+
+/**
+ * Call the DeepSeek chat completions API
+ */
+async function callDeepseekChat(prompt, modelName, { temperature, topP }) {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    throw new Error('DEEPSEEK_API_KEY environment variable is required for DeepSeek provider');
+  }
+
+  const baseUrl = (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1').replace(/\/$/, '');
+  let proxyUrl =
+    process.env.HTTPS_PROXY ||
+    process.env.https_proxy ||
+    process.env.HTTP_PROXY ||
+    process.env.http_proxy ||
+    null;
+
+  try {
+    const parsedUrl = new URL(baseUrl);
+    if (
+      ['localhost', '127.0.0.1', '::1'].includes(parsedUrl.hostname) ||
+      parsedUrl.hostname.endsWith('.localhost')
+    ) {
+      proxyUrl = null;
+    }
+  } catch (err) {
+    console.warn(`Warning: Invalid DEEPSEEK_BASE_URL ${baseUrl}: ${err.message}`);
+  }
+
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: modelName,
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature,
+      top_p: topP,
+    }),
+  };
+
+  if (proxyUrl) {
+    fetchOptions.dispatcher = new ProxyAgent(proxyUrl);
+  }
+
+  const fetchImpl = typeof fetch === 'function' ? fetch : undiciFetch;
+
+  let response;
+  try {
+    response = await fetchImpl(`${baseUrl}/chat/completions`, fetchOptions);
+  } catch (error) {
+    const causeMessage = error?.cause?.message ? `: ${error.cause.message}` : '';
+    throw new Error(`DeepSeek API request failed: ${error.message}${causeMessage}`);
+  }
+
+  if (!response.ok) {
+    let errorText;
+    try {
+      errorText = await response.text();
+    } catch (err) {
+      errorText = err.message;
+    }
+    throw new Error(`DeepSeek API error (${response.status} ${response.statusText}): ${errorText}`);
+  }
+
+  const data = await response.json();
+  const message = data.choices && data.choices[0] && data.choices[0].message;
+  const content = message && message.content;
+
+  if (!content) {
+    throw new Error('DeepSeek API returned an empty response');
+  }
+
+  return content.trim();
+}
 
 /**
  * Generate a file tree representation of the repository
@@ -145,6 +234,12 @@ async function parseWikiStructure(xmlText) {
     cleanXml = cleanXml.slice(0, -3);
   }
   cleanXml = cleanXml.trim();
+
+  // Ensure stray ampersands or other invalid XML characters don't break parsing
+  cleanXml = cleanXml.replace(
+    /&(?!(?:amp|lt|gt|apos|quot|#\d+|#x[a-fA-F0-9]+);)/g,
+    '&amp;'
+  );
 
   try {
     const result = await parseStringPromise(cleanXml, {
@@ -373,7 +468,7 @@ IMPORTANT FORMATTING INSTRUCTIONS:
   if (provider === 'google') {
     const modelConfig = DEFAULT_MODELS.google;
     const modelName = model || modelConfig.model;
-    
+
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const llm = genAI.getGenerativeModel({
       model: modelName,
@@ -391,7 +486,20 @@ IMPORTANT FORMATTING INSTRUCTIONS:
     // Parse the XML response
     const structure = await parseWikiStructure(responseText);
     console.log(`✅ Wiki structure created with ${structure.pages.length} pages`);
-    
+
+    return structure;
+  } else if (provider === 'deepseek') {
+    const modelConfig = DEFAULT_MODELS.deepseek;
+    const modelName = model || modelConfig.model;
+
+    const responseText = await callDeepseekChat(prompt, modelName, {
+      temperature: modelConfig.temperature,
+      topP: modelConfig.topP,
+    });
+
+    const structure = await parseWikiStructure(responseText);
+    console.log(`✅ Wiki structure created with ${structure.pages.length} pages`);
+
     return structure;
   } else {
     throw new Error(`Provider ${provider} not yet implemented in CLI`);
@@ -469,7 +577,7 @@ Write in a clear, professional style suitable for technical documentation.
   if (provider === 'google') {
     const modelConfig = DEFAULT_MODELS.google;
     const modelName = model || modelConfig.model;
-    
+
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const llm = genAI.getGenerativeModel({
       model: modelName,
@@ -483,6 +591,14 @@ Write in a clear, professional style suitable for technical documentation.
     const result = await llm.generateContent(prompt);
     const response = await result.response;
     return response.text();
+  } else if (provider === 'deepseek') {
+    const modelConfig = DEFAULT_MODELS.deepseek;
+    const modelName = model || modelConfig.model;
+
+    return callDeepseekChat(prompt, modelName, {
+      temperature: modelConfig.temperature,
+      topP: modelConfig.topP,
+    });
   } else {
     throw new Error(`Provider ${provider} not yet implemented in CLI`);
   }

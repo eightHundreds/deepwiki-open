@@ -217,6 +217,7 @@ DeepWiki now implements a flexible provider-based model selection system support
 ### Supported Providers and Models
 
 - **Google**: Default `gemini-2.5-flash`, also supports `gemini-2.5-flash-lite`, `gemini-2.5-pro`, etc.
+- **DeepSeek**: Default `deepseek-chat` via the CLI, ideal for running with DeepSeek's official API.
 - **OpenAI**: Default `gpt-5-nano`, also supports `gpt-5`, `4o`, etc.
 - **OpenRouter**: Access to multiple models via a unified API, including Claude, Llama, Mistral, etc.
 - **Azure OpenAI**: Default `gpt-4o`, also supports `o4-mini`, etc.
@@ -229,6 +230,8 @@ Each provider requires its corresponding API key environment variables:
 ```
 # API Keys
 GOOGLE_API_KEY=your_google_api_key        # Required for Google Gemini models
+DEEPSEEK_API_KEY=your_deepseek_api_key    # Required for DeepSeek models
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1 # Optional override for custom DeepSeek endpoints or mocks
 OPENAI_API_KEY=your_openai_api_key        # Required for OpenAI models
 OPENROUTER_API_KEY=your_openrouter_api_key # Required for OpenRouter models
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key  #Required for Azure OpenAI models
@@ -244,6 +247,8 @@ OLLAMA_HOST=your_ollama_host # Optional, if Ollama is not local. default: http:/
 # Configuration Directory
 DEEPWIKI_CONFIG_DIR=/path/to/custom/config/dir  # Optional, for custom config file location
 ```
+
+> **DeepSeek testing tip:** When corporate proxies block `api.deepseek.com`, start the included mock server (`node tools/mock-deepseek-server.js`) and set `DEEPSEEK_BASE_URL=http://localhost:3800/v1` before invoking the CLI.
 
 ### Configuration Files
 
