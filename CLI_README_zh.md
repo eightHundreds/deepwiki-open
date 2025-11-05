@@ -73,7 +73,7 @@ Options:
   -V, --version                  输出版本号
   -o, --output <dir>             输出目录名称（默认：".repo-wiki"）
   -l, --language <lang>          文档语言（en, zh, ja, es, kr, vi, pt-br, fr, ru）（默认："en"）
-  --provider <provider>          LLM 提供商（google, openai, ollama）（默认："google"）
+  --provider <provider>          LLM 提供商（google, deepseek, openai, ollama）（默认："google"）
   --model <model>                使用的模型名称
   --exclude-dirs <dirs>          要排除的目录列表（逗号分隔）
   --exclude-files <files>        要排除的文件列表（逗号分隔）
@@ -89,6 +89,13 @@ Options:
 ```bash
 export GOOGLE_API_KEY=your_api_key
 deepwiki
+```
+
+#### 使用 DeepSeek 生成文档
+
+```bash
+export DEEPSEEK_API_KEY=your_api_key
+deepwiki --provider deepseek
 ```
 
 #### 使用 OpenAI 生成文档
@@ -127,6 +134,8 @@ deepwiki --provider google --model gemini-2.5-pro
 CLI 使用以下环境变量：
 
 - `GOOGLE_API_KEY`: Google Gemini API 密钥（使用 Google 提供商时必需）
+- `DEEPSEEK_API_KEY`: DeepSeek API 密钥（使用 DeepSeek 提供商时必需）
+- `DEEPSEEK_BASE_URL`: 自定义 DeepSeek API 基础地址（可选，适用于需要代理或使用模拟服务器的场景）
 - `OPENAI_API_KEY`: OpenAI API 密钥（使用 OpenAI 提供商时必需）
 - `OLLAMA_HOST`: Ollama 主机 URL（可选，默认为 http://localhost:11434）
 
@@ -134,6 +143,7 @@ CLI 使用以下环境变量：
 
 ```bash
 GOOGLE_API_KEY=your_google_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -179,6 +189,15 @@ deepwiki --provider google
 ```
 
 默认模型：`gemini-2.5-flash`
+
+### DeepSeek
+
+```bash
+export DEEPSEEK_API_KEY=your_api_key
+deepwiki --provider deepseek
+```
+
+默认模型：`deepseek-chat`
 
 ### OpenAI
 
