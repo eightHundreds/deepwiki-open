@@ -1,0 +1,62 @@
+{
+  "title": "Sample Project Wiki",
+  "description": "A demonstration of how DeepWiki CLI generates documentation for your project.",
+  "pages": [
+    {
+      "id": "page-1",
+      "title": "Architecture Overview",
+      "description": "High-level architecture and system design",
+      "importance": "high",
+      "filePaths": [
+        "src/app.js",
+        "src/config/database.js"
+      ],
+      "relatedPages": [
+        "page-3",
+        "page-4"
+      ]
+    },
+    {
+      "id": "page-2",
+      "title": "Getting Started",
+      "description": "Installation and setup guide",
+      "importance": "high",
+      "filePaths": [
+        "README.md",
+        "package.json"
+      ],
+      "relatedPages": [
+        "page-1",
+        "page-3"
+      ]
+    },
+    {
+      "id": "page-3",
+      "title": "Core Features",
+      "description": "Main functionality and capabilities",
+      "importance": "high",
+      "filePaths": [
+        "src/features/auth.js",
+        "src/features/processing.js"
+      ],
+      "relatedPages": [
+        "page-1",
+        "page-4"
+      ]
+    },
+    {
+      "id": "page-4",
+      "title": "API Reference",
+      "description": "API endpoints and usage",
+      "importance": "medium",
+      "filePaths": [
+        "src/routes/users.js",
+        "src/routes/process.js"
+      ],
+      "relatedPages": [
+        "page-3"
+      ]
+    }
+  ],
+  "sections": []
+}

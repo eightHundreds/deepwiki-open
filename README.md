@@ -9,6 +9,9 @@
 3. Create visual diagrams to explain how everything works
 4. Organize it all into an easy-to-navigate wiki
 
+> **🆕 New: CLI Tool Available!**
+> Generate documentation directly in your project with the DeepWiki CLI tool. Perfect for local documentation generation without needing the web interface. See [CLI Documentation](./CLI_README.md) for details.
+
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/sheing)
 [![Tip in Crypto](https://tip.md/badge.svg)](https://tip.md/sng-asyncfunc)
 [![Twitter/X](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/sashimikun_void)
@@ -19,6 +22,7 @@
 ## ✨ Features
 
 - **Instant Documentation**: Turn any GitHub, GitLab or BitBucket repo into a wiki in seconds
+- **CLI Tool**: Generate documentation directly in your project with `.repo-wiki` directory
 - **Private Repository Support**: Securely access private repositories with personal access tokens
 - **Smart Analysis**: AI-powered understanding of code structure and relationships
 - **Beautiful Diagrams**: Automatic Mermaid diagrams to visualize architecture and data flow
@@ -29,6 +33,27 @@
 - **Flexible Embeddings**: Choose between OpenAI, Google AI, or local Ollama embeddings for optimal performance
 
 ## 🚀 Quick Start (Super Easy!)
+
+### Option 0: CLI Tool (For Local Documentation Generation)
+
+Generate documentation directly in your project with pure Node.js:
+
+```bash
+# Install dependencies
+npm install
+
+# Set your API key
+export GOOGLE_API_KEY=your_api_key
+
+# Generate documentation
+node bin/deepwiki.js
+
+# Documentation will be created in .repo-wiki/ directory
+```
+
+**No Python required!** The CLI tool is now pure Node.js.
+
+For more CLI options and detailed usage, see [CLI Documentation](./CLI_README.md) or [CLI 文档（中文）](./CLI_README_zh.md).
 
 ### Option 1: Using Docker
 
@@ -192,6 +217,7 @@ DeepWiki now implements a flexible provider-based model selection system support
 ### Supported Providers and Models
 
 - **Google**: Default `gemini-2.5-flash`, also supports `gemini-2.5-flash-lite`, `gemini-2.5-pro`, etc.
+- **DeepSeek**: Default `deepseek-chat` via the CLI, ideal for running with DeepSeek's official API.
 - **OpenAI**: Default `gpt-5-nano`, also supports `gpt-5`, `4o`, etc.
 - **OpenRouter**: Access to multiple models via a unified API, including Claude, Llama, Mistral, etc.
 - **Azure OpenAI**: Default `gpt-4o`, also supports `o4-mini`, etc.
@@ -204,6 +230,8 @@ Each provider requires its corresponding API key environment variables:
 ```
 # API Keys
 GOOGLE_API_KEY=your_google_api_key        # Required for Google Gemini models
+DEEPSEEK_API_KEY=your_deepseek_api_key    # Required for DeepSeek models
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1 # Optional override for custom DeepSeek endpoints or mocks
 OPENAI_API_KEY=your_openai_api_key        # Required for OpenAI models
 OPENROUTER_API_KEY=your_openrouter_api_key # Required for OpenRouter models
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key  #Required for Azure OpenAI models
